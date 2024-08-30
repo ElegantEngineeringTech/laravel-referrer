@@ -25,7 +25,7 @@ class CaptureReferrerMiddleware
         /**
          * @var array<class-string<ReferrerDriver>, mixed> $drivers
          */
-        $drivers = config('referrer.drivers');
+        $drivers = config('referrer.drivers') ?? [];
 
         foreach ($drivers as $driver => $options) {
             $driver::put($sources);
@@ -44,7 +44,7 @@ class CaptureReferrerMiddleware
         /**
          * @var class-string<ReferrerSource<mixed>>[]
          */
-        $sources = config('referrer.sources');
+        $sources = config('referrer.sources') ?? [];
 
         foreach ($sources as $source) {
             $results[$source] = $source::fromRequest($request);

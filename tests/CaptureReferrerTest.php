@@ -14,7 +14,7 @@ it('can capture referrer from utm', function ($driver) {
 
     $response->assertStatus(200);
 
-    $referrer = Referrer::getSourcesByDriver();
+    $referrer = Referrer::getDrivers();
 
     expect($referrer[$driver])->not->toBeNull();
 })->with([
@@ -32,7 +32,7 @@ it('can capture referrer from Request Header', function ($driver) {
 
     $response->assertStatus(200);
 
-    $referrer = Referrer::getSourcesByDriver();
+    $referrer = Referrer::getDrivers();
 
     expect($referrer[$driver])->not->toBeNull();
 })->with([
