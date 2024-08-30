@@ -22,13 +22,15 @@ class CaptureReferrerMiddleware
     {
         $sources = $this->getReferrerBySource($request);
 
-        /**
-         * @var array<class-string<ReferrerDriver>, mixed> $drivers
-         */
-        $drivers = config('referrer.drivers') ?? [];
+        if (! empty($sources)) {
+            /**
+             * @var array<class-string<ReferrerDriver>, mixed> $drivers
+             */
+            $drivers = config('referrer.drivers') ?? [];
 
-        foreach ($drivers as $driver => $options) {
-            $driver::put($sources);
+            foreach ($drivers as $driver => $options) {
+                $driver::merge($sources);
+            }
         }
 
         return $next($request);
@@ -46,8 +48,12 @@ class CaptureReferrerMiddleware
          */
         $sources = config('referrer.sources') ?? [];
 
-        foreach ($sources as $source) {
-            $results[$source] = $source::fromRequest($request);
+        foreach ($sources as $sourceName) {
+            $source = $sourceName::fromRequest($request);
+
+            if (! $source->isEmpty()) {
+                $results[$sourceName] = $source;
+            }
         }
 
         return $results;

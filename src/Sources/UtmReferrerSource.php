@@ -44,6 +44,11 @@ class UtmReferrerSource extends ReferrerSource
         //
     }
 
+    public function isEmpty(): bool
+    {
+        return blank($this->utm_source);
+    }
+
     public static function fromRequest(Request $request): static
     {
         return new static(

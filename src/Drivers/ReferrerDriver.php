@@ -33,6 +33,17 @@ abstract class ReferrerDriver
     abstract public static function forget(): void;
 
     /**
+     * @param  ReferrerSource<mixed>[]  $sources
+     */
+    public static function merge(array $sources): void
+    {
+        static::put(array_merge(
+            static::get() ?? [],
+            $sources,
+        ));
+    }
+
+    /**
      * @param  ReferrerSourceFullArray  $sources
      * @return ReferrerSourceArray
      */

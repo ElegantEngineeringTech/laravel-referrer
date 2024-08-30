@@ -23,4 +23,6 @@ abstract class ReferrerSource implements Arrayable
      * @return array<string, TValue>
      */
     abstract public function toArray(): array;
+
+    abstract public function isEmpty(): bool;
 }

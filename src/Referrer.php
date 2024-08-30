@@ -13,6 +13,11 @@ use Illuminate\Support\Collection;
  */
 class Referrer
 {
+    public function make(): self
+    {
+        return new self;
+    }
+
     /**
      * @param  class-string<ReferrerDriver>  $driver
      * @return ReferrerSourceArray|null
@@ -23,19 +28,19 @@ class Referrer
     }
 
     /**
-     * @template T of ReferrerSource<mixed>
+     * @template TSource of ReferrerSource<mixed>
      *
-     * @param  class-string<T>  $source
+     * @param  class-string<TSource>  $source
      * @param  null|class-string<ReferrerDriver>  $driver
-     * @return null|T
+     * @return null|TSource
      */
     public function getSource(string $source, ?string $driver = null)
     {
         if ($driver && $driverValue = $this->getDriver($driver)) {
-            /** @var null|T */
+            /** @var null|TSource */
             $value = $driverValue[$source] ?? null;
         } else {
-            /** @var null|T */
+            /** @var null|TSource */
             $value = $this->getSources()[$source] ?? null;
         }
 

@@ -16,6 +16,11 @@ class RequestHeaderSource extends ReferrerSource
         //
     }
 
+    public function isEmpty(): bool
+    {
+        return blank($this->referrer);
+    }
+
     public static function fromRequest(Request $request): static
     {
         return new static(
