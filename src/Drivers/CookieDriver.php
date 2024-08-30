@@ -1,13 +1,13 @@
 <?php
 
-namespace Elegantly\Referer\Drivers;
+namespace Elegantly\Referrer\Drivers;
 
 use Illuminate\Support\Facades\Cookie;
 
 /**
- * @phpstan-import-type RefererSourceFullArray from RefererDriver
+ * @phpstan-import-type ReferrerSourceFullArray from ReferrerDriver
  */
-class CookieDriver extends RefererDriver
+class CookieDriver extends ReferrerDriver
 {
     public static function put(array $sources): void
     {
@@ -24,7 +24,7 @@ class CookieDriver extends RefererDriver
         if ($key = static::getKey()) {
             $cookie = Cookie::get($key);
             /**
-             * @var null|RefererSourceFullArray $sources
+             * @var null|ReferrerSourceFullArray $sources
              */
             $sources = is_string($cookie) ? json_decode($cookie, true) : null;
 

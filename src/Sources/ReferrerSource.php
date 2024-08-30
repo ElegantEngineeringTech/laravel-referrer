@@ -1,6 +1,6 @@
 <?php
 
-namespace Elegantly\Referer\Sources;
+namespace Elegantly\Referrer\Sources;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
  *
  * @implements Arrayable<string, TValue>
  */
-abstract class RefererSource implements Arrayable
+abstract class ReferrerSource implements Arrayable
 {
     abstract public static function fromRequest(Request $request): static;
 

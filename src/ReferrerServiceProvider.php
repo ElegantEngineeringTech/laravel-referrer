@@ -1,11 +1,11 @@
 <?php
 
-namespace Elegantly\Referer;
+namespace Elegantly\Referrer;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class RefererServiceProvider extends PackageServiceProvider
+class ReferrerServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
@@ -15,7 +15,7 @@ class RefererServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('laravel-referer')
+            ->name('laravel-referrer')
             ->hasConfigFile();
     }
 }

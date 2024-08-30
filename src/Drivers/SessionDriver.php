@@ -1,13 +1,13 @@
 <?php
 
-namespace Elegantly\Referer\Drivers;
+namespace Elegantly\Referrer\Drivers;
 
 use Illuminate\Support\Facades\Session;
 
 /**
- * @phpstan-import-type RefererSourceFullArray from RefererDriver
+ * @phpstan-import-type ReferrerSourceFullArray from ReferrerDriver
  */
-class SessionDriver extends RefererDriver
+class SessionDriver extends ReferrerDriver
 {
     public static function put(array $sources): void
     {
@@ -23,7 +23,7 @@ class SessionDriver extends RefererDriver
     {
         if ($key = static::getKey()) {
             /**
-             * @var RefererSourceFullArray $sources
+             * @var ReferrerSourceFullArray $sources
              */
             $sources = Session::get($key);
 

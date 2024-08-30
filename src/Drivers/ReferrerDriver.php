@@ -1,40 +1,40 @@
 <?php
 
-namespace Elegantly\Referer\Drivers;
+namespace Elegantly\Referrer\Drivers;
 
-use Elegantly\Referer\Sources\RefererSource;
+use Elegantly\Referrer\Sources\ReferrerSource;
 
 /**
- * @phpstan-type RefererSourceFullArray array<class-string<RefererSource<mixed>>, array<string, mixed>>
- * @phpstan-type RefererSourceArray array<class-string<RefererSource<mixed>>, RefererSource<mixed>>
+ * @phpstan-type ReferrerSourceFullArray array<class-string<ReferrerSource<mixed>>, array<string, mixed>>
+ * @phpstan-type ReferrerSourceArray array<class-string<ReferrerSource<mixed>>, ReferrerSource<mixed>>
  */
-abstract class RefererDriver
+abstract class ReferrerDriver
 {
     public static function getKey(): ?string
     {
         /**
          * @var ?string $key
          */
-        $key = config('referer.drivers.'.static::class.'.key');
+        $key = config('referrer.drivers.'.static::class.'.key');
 
         return $key;
     }
 
     /**
-     * @param  RefererSource<mixed>[]  $sources
+     * @param  ReferrerSource<mixed>[]  $sources
      */
     abstract public static function put(array $sources): void;
 
     /**
-     * @return null|RefererSourceArray
+     * @return null|ReferrerSourceArray
      */
     abstract public static function get(): ?array;
 
     abstract public static function forget(): void;
 
     /**
-     * @param  RefererSourceFullArray  $sources
-     * @return RefererSourceArray
+     * @param  ReferrerSourceFullArray  $sources
+     * @return ReferrerSourceArray
      */
     protected static function fromArray(array $sources): array
     {
@@ -48,8 +48,8 @@ abstract class RefererDriver
     }
 
     /**
-     * @param  RefererSource<mixed>[]  $sources
-     * @return RefererSourceFullArray
+     * @param  ReferrerSource<mixed>[]  $sources
+     * @return ReferrerSourceFullArray
      */
     protected static function toArray(array $sources): array
     {
@@ -57,7 +57,7 @@ abstract class RefererDriver
 
         foreach ($sources as $source) {
             /**
-             * @var class-string<RefererSource<mixed>> $className
+             * @var class-string<ReferrerSource<mixed>> $className
              */
             $className = get_class($source);
             $results[$className] = $source->toArray();

@@ -1,12 +1,12 @@
 {
-    "name": "elegantly/laravel-referer",
+    "name": "elegantly/laravel-referrer",
     "description": "Remember User Origin",
     "keywords": [
         "elegantly",
         "laravel",
-        "laravel-referer"
+        "laravel-referrer"
     ],
-    "homepage": "https://github.com/elegantengineeringtech/laravel-referer",
+    "homepage": "https://github.com/elegantengineeringtech/laravel-referrer",
     "license": "MIT",
     "authors": [
         {
@@ -34,19 +34,19 @@
     },
     "autoload": {
         "psr-4": {
-            "Elegantly\\Referer\\": "src/",
-            "Elegantly\\Referer\\Database\\Factories\\": "database/factories/"
+            "Elegantly\\Referrer\\": "src/",
+            "Elegantly\\Referrer\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Elegantly\\Referer\\Tests\\": "tests/",
+            "Elegantly\\Referrer\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
     "scripts": {
         "post-autoload-dump": "@composer run prepare",
-        "clear": "@php vendor/bin/testbench package:purge-laravel-referer --ansi",
+        "clear": "@php vendor/bin/testbench package:purge-laravel-referrer --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "build": [
             "@composer run prepare",
@@ -72,10 +72,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Elegantly\\Referer\\RefererServiceProvider"
+                "Elegantly\\Referrer\\ReferrerServiceProvider"
             ],
             "aliases": {
-                "Referer": "Elegantly\\Referer\\Facades\\Referer"
+                "Referrer": "Elegantly\\Referrer\\Facades\\Referrer"
             }
         }
     },

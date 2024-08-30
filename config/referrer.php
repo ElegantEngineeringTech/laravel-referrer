@@ -12,8 +12,8 @@ return [
     |
     */
     'sources' => [
-        \Elegantly\Referer\Sources\UtmRefererSource::class,
-        \Elegantly\Referer\Sources\RequestHeaderSource::class,
+        \Elegantly\Referrer\Sources\UtmReferrerSource::class,
+        \Elegantly\Referrer\Sources\RequestHeaderSource::class,
     ],
 
     /*
@@ -28,13 +28,13 @@ return [
     |
     */
     'drivers' => [
-        \Elegantly\Referer\Drivers\ContextDriver::class => [
+        \Elegantly\Referrer\Drivers\ContextDriver::class => [
             'key' => null,
         ],
-        \Elegantly\Referer\Drivers\SessionDriver::class => [
+        \Elegantly\Referrer\Drivers\SessionDriver::class => [
             'key' => null,
         ],
-        \Elegantly\Referer\Drivers\CookieDriver::class => [
+        \Elegantly\Referrer\Drivers\CookieDriver::class => [
             'key' => null,
         ],
     ],

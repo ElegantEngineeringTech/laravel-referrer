@@ -1,25 +1,25 @@
 <?php
 
-namespace Elegantly\Referer;
+namespace Elegantly\Referrer;
 
-use Elegantly\Referer\Drivers\RefererDriver;
+use Elegantly\Referrer\Drivers\ReferrerDriver;
 
 /**
- * @phpstan-import-type RefererSourceArray from RefererDriver
+ * @phpstan-import-type ReferrerSourceArray from ReferrerDriver
  *
- * @phpstan-type RefererDriverArray array<class-string<RefererDriver>, RefererSourceArray|null>
+ * @phpstan-type ReferrerDriverArray array<class-string<ReferrerDriver>, ReferrerSourceArray|null>
  */
-class Referer
+class Referrer
 {
     /**
-     * @return RefererDriverArray
+     * @return ReferrerDriverArray
      */
     public function getSourcesByDriver(): array
     {
         /**
-         * @var array<class-string<RefererDriver>, mixed> $drivers
+         * @var array<class-string<ReferrerDriver>, mixed> $drivers
          */
-        $drivers = config('referer.drivers');
+        $drivers = config('referrer.drivers');
 
         $results = [];
 
@@ -31,7 +31,7 @@ class Referer
     }
 
     /**
-     * @return RefererSourceArray
+     * @return ReferrerSourceArray
      */
     public function getSources(): array
     {

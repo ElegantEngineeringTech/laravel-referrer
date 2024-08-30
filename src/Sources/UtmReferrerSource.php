@@ -1,13 +1,13 @@
 <?php
 
-namespace Elegantly\Referer\Sources;
+namespace Elegantly\Referrer\Sources;
 
 use Illuminate\Http\Request;
 
 /**
- * @extends RefererSource<string|null>
+ * @extends ReferrerSource<string|null>
  */
-class UtmRefererSource extends RefererSource
+class UtmReferrerSource extends ReferrerSource
 {
     final public function __construct(
         /**

@@ -1,17 +1,17 @@
 <?php
 
-namespace Elegantly\Referer;
+namespace Elegantly\Referrer;
 
 use Closure;
-use Elegantly\Referer\Drivers\RefererDriver;
-use Elegantly\Referer\Sources\RefererSource;
+use Elegantly\Referrer\Drivers\ReferrerDriver;
+use Elegantly\Referrer\Sources\ReferrerSource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @phpstan-import-type RefererSourceArray from \Elegantly\Referer\Drivers\RefererDriver
+ * @phpstan-import-type ReferrerSourceArray from \Elegantly\Referrer\Drivers\ReferrerDriver
  */
-class CaptureRefererMiddleware
+class CaptureReferrerMiddleware
 {
     /**
      * Handle an incoming request.
@@ -20,12 +20,12 @@ class CaptureRefererMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $sources = $this->getRefererBySource($request);
+        $sources = $this->getReferrerBySource($request);
 
         /**
-         * @var array<class-string<RefererDriver>, mixed> $drivers
+         * @var array<class-string<ReferrerDriver>, mixed> $drivers
          */
-        $drivers = config('referer.drivers');
+        $drivers = config('referrer.drivers');
 
         foreach ($drivers as $driver => $options) {
             $driver::put($sources);
@@ -35,16 +35,16 @@ class CaptureRefererMiddleware
     }
 
     /**
-     * @return RefererSourceArray
+     * @return ReferrerSourceArray
      */
-    public function getRefererBySource(Request $request): array
+    public function getReferrerBySource(Request $request): array
     {
         $results = [];
 
         /**
-         * @var class-string<RefererSource<mixed>>[]
+         * @var class-string<ReferrerSource<mixed>>[]
          */
-        $sources = config('referer.sources');
+        $sources = config('referrer.sources');
 
         foreach ($sources as $source) {
             $results[$source] = $source::fromRequest($request);

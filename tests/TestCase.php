@@ -1,10 +1,10 @@
 <?php
 
-namespace Elegantly\Referer\Tests;
+namespace Elegantly\Referrer\Tests;
 
-use Elegantly\Referer\CaptureRefererMiddleware;
-use Elegantly\Referer\Facades\Referer;
-use Elegantly\Referer\RefererServiceProvider;
+use Elegantly\Referrer\CaptureReferrerMiddleware;
+use Elegantly\Referrer\Facades\Referrer;
+use Elegantly\Referrer\ReferrerServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -14,17 +14,17 @@ class TestCase extends Orchestra
     {
         parent::setUp();
 
-        $this->app['router']->get('/', fn () => Referer::getSources())->middleware(CaptureRefererMiddleware::class);
+        $this->app['router']->get('/', fn () => Referrer::getSources())->middleware(CaptureReferrerMiddleware::class);
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Elegantly\\Referer\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'Elegantly\\Referrer\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            RefererServiceProvider::class,
+            ReferrerServiceProvider::class,
         ];
     }
 
@@ -33,7 +33,7 @@ class TestCase extends Orchestra
         config()->set('database.default', 'testing');
 
         /*
-        $migration = include __DIR__.'/../database/migrations/create_laravel-referer_table.php.stub';
+        $migration = include __DIR__.'/../database/migrations/create_laravel-referrer_table.php.stub';
         $migration->up();
         */
     }

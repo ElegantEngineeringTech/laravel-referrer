@@ -1,16 +1,16 @@
 <?php
 
-namespace Elegantly\Referer\Sources;
+namespace Elegantly\Referrer\Sources;
 
 use Illuminate\Http\Request;
 
 /**
- * @extends RefererSource<string|null>
+ * @extends ReferrerSource<string|null>
  */
-class RequestHeaderSource extends RefererSource
+class RequestHeaderSource extends ReferrerSource
 {
     final public function __construct(
-        public ?string $referer = null,
+        public ?string $referrer = null,
 
     ) {
         //
@@ -19,31 +19,31 @@ class RequestHeaderSource extends RefererSource
     public static function fromRequest(Request $request): static
     {
         return new static(
-            referer: $request->header('referer'),
+            referrer: $request->header('referer'), // spelling is a known mistake
         );
     }
 
     /**
      * @param array{
-     *      referer?: string|null,
+     *      referrer?: string|null,
      *  } $values
      */
     public static function fromArray(array $values): static
     {
         return new static(
-            referer: $values['referer'] ?? null,
+            referrer: $values['referrer'] ?? null,
         );
     }
 
     /**
      * @return array{
-     *      referer?: string|null,
+     *      referrer?: string|null,
      *  }
      */
     public function toArray(): array
     {
         return [
-            'referer' => $this->referer,
+            'referrer' => $this->referrer,
         ];
     }
 }
