@@ -1,10 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace Elegantly\Referer\Tests;
 
+use Elegantly\Referer\CaptureRefererMiddleware;
+use Elegantly\Referer\Facades\Referer;
+use Elegantly\Referer\RefererServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use VendorName\Skeleton\SkeletonServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -12,15 +14,17 @@ class TestCase extends Orchestra
     {
         parent::setUp();
 
+        $this->app['router']->get('/', fn () => Referer::getSources())->middleware(CaptureRefererMiddleware::class);
+
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'Elegantly\\Referer\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            SkeletonServiceProvider::class,
+            RefererServiceProvider::class,
         ];
     }
 
@@ -29,7 +33,7 @@ class TestCase extends Orchestra
         config()->set('database.default', 'testing');
 
         /*
-        $migration = include __DIR__.'/../database/migrations/create_skeleton_table.php.stub';
+        $migration = include __DIR__.'/../database/migrations/create_laravel-referer_table.php.stub';
         $migration->up();
         */
     }
