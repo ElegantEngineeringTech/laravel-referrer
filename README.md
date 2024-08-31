@@ -43,7 +43,7 @@ return [
     |
     | These are the classes containing the logic to detect the visitor's referrer.
     | You can disable some of them or add as many as you want.
-    | Regardless of the number of sources you define, they will all be stored.
+    | No matter how many sources you define, they will all be stored.
     |
     */
     'sources' => [
@@ -59,7 +59,7 @@ return [
     | These are the classes containing the logic to store the visitor's referrer.
     | By default, they are all disabled. To enable a driver, add a "key" value.
     | You can also add your own driver if needed.
-    | Regardless of the number of drivers you define, they will all store the referrer sources.
+    | No matter how many drivers you define, they will all store the referrer sources.
     |
     */
     'drivers' => [
@@ -71,6 +71,10 @@ return [
         ],
         \Elegantly\Referrer\Drivers\CookieDriver::class => [
             'key' => null,
+            /**
+             * Lifetime in seconds
+             */
+            'lifetime' => 60 * 60 * 24 * 365,
         ],
     ],
 ];

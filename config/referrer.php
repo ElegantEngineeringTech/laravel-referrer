@@ -14,6 +14,8 @@ return [
     'sources' => [
         \Elegantly\Referrer\Sources\UtmReferrerSource::class,
         \Elegantly\Referrer\Sources\RequestHeaderSource::class,
+        \Elegantly\Referrer\Sources\GoogleClickIdSource::class,
+        \Elegantly\Referrer\Sources\MetaClickIdSource::class,
     ],
 
     /*
