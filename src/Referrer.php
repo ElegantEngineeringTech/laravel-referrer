@@ -9,28 +9,28 @@ class Referrer
     /**
      * @return array<class-string<ReferrerDriver>, null|ReferrerSources>
      */
-    public function getSroucesByDriver(): array
+    public function getSourcesByDriver(): array
     {
         $results = [];
 
-        foreach ($this->getDriversFromConfig() as $driver => $options) {
-            $results[$driver] = $driver::get();
+        foreach ($this->getDriversFromConfig() as $driverName => $options) {
+            $results[$driverName] = $driverName::make()?->get();
         }
 
         return $results;
     }
 
     /**
-     * @param  class-string<ReferrerDriver>  $driver
+     * @param  class-string<ReferrerDriver>  $driverName
      */
-    public function getSources(?string $driver = null): ?ReferrerSources
+    public function get(?string $driverName = null): ReferrerSources
     {
-        if ($driver) {
-            return $driver::get();
+        if ($driverName) {
+            return $driverName::make()?->get() ?? new ReferrerSources;
         }
 
         return array_reduce(
-            $this->getSroucesByDriver(),
+            $this->getSourcesByDriver(),
             function (ReferrerSources $result, ?ReferrerSources $sources) {
                 if ($sources && $sources->count()) {
                     return $sources->merge($result);
@@ -40,6 +40,20 @@ class Referrer
             },
             new ReferrerSources
         );
+    }
+
+    public function forget(): void
+    {
+        foreach ($this->getDriversFromConfig() as $driverName => $options) {
+            $driverName::make()?->forget();
+        }
+    }
+
+    public function put(ReferrerSources $sources): void
+    {
+        foreach ($this->getDriversFromConfig() as $driverName => $options) {
+            $driverName::make()?->put($sources);
+        }
     }
 
     /**

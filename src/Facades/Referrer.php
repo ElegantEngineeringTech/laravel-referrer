@@ -7,8 +7,10 @@ use Elegantly\Referrer\ReferrerSources;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static array<class-string<ReferrerDriver>, ReferrerSources> getSroucesByDriver()
- * @method static null|ReferrerSources getSources()
+ * @method static array<class-string<ReferrerDriver>, ReferrerSources> getSourcesByDriver()
+ * @method static ReferrerSources get()
+ * @method static void put(ReferrerSources $sources)
+ * @method static void forget()
  *
  * @see \Elegantly\Referrer\Referrer
  */

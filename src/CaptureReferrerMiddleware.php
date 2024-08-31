@@ -3,7 +3,7 @@
 namespace Elegantly\Referrer;
 
 use Closure;
-use Elegantly\Referrer\Drivers\ReferrerDriver;
+use Elegantly\Referrer\Facades\Referrer;
 use Elegantly\Referrer\Sources\ReferrerSource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,14 +23,7 @@ class CaptureReferrerMiddleware
         $sources = $this->getReferrerBySource($request);
 
         if ($sources->count()) {
-            /**
-             * @var array<class-string<ReferrerDriver>, mixed> $drivers
-             */
-            $drivers = config('referrer.drivers') ?? [];
-
-            foreach ($drivers as $driver => $options) {
-                $driver::merge($sources);
-            }
+            Referrer::put($sources);
         }
 
         return $next($request);

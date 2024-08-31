@@ -11,56 +11,20 @@ use Elegantly\Referrer\Sources\ReferrerSource;
  */
 abstract class ReferrerDriver
 {
-    public static function getKey(): ?string
+    abstract public static function make(): ?static;
+
+    abstract public function put(ReferrerSources $sources): void;
+
+    abstract public function get(): ?ReferrerSources;
+
+    abstract public function forget(): void;
+
+    public function merge(ReferrerSources $sources): void
     {
-        /**
-         * @var ?string $key
-         */
-        $key = config('referrer.drivers.'.static::class.'.key');
-
-        return $key;
-    }
-
-    abstract public static function put(ReferrerSources $sources): void;
-
-    abstract public static function get(): ?ReferrerSources;
-
-    abstract public static function forget(): void;
-
-    public static function merge(ReferrerSources $sources): void
-    {
-        if ($current = static::get()) {
-            static::put($current->merge($sources));
+        if ($current = $this->get()) {
+            $this->put($current->merge($sources));
         } else {
-            static::put($sources);
+            $this->put($sources);
         }
-    }
-
-    /**
-     * @param  ReferrerSourceFullArray  $sources
-     */
-    protected static function fromArray(array $sources): ReferrerSources
-    {
-        $items = new ReferrerSources;
-
-        foreach ($sources as $source => $values) {
-            $items->put($source::fromArray($values));
-        }
-
-        return $items;
-    }
-
-    /**
-     * @return ReferrerSourceFullArray
-     */
-    protected static function toArray(ReferrerSources $sources): array
-    {
-        $results = [];
-
-        foreach ($sources as $source) {
-            $results[$source::class] = $source->toArray();
-        }
-
-        return $results;
     }
 }

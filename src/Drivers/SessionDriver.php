@@ -6,40 +6,55 @@ use Elegantly\Referrer\ReferrerSources;
 use Illuminate\Support\Facades\Session;
 
 /**
- * @phpstan-import-type ReferrerSourceFullArray from ReferrerDriver
+ * @phpstan-import-type ReferrerSourceFullArray from ReferrerSources
  */
 class SessionDriver extends ReferrerDriver
 {
-    public static function put(ReferrerSources $sources): void
-    {
-        if ($key = static::getKey()) {
-            Session::put(
-                $key,
-                static::toArray($sources)
-            );
-        }
+    final public function __construct(
+        public string $key,
+    ) {
+        //
     }
 
-    public static function get(): ?ReferrerSources
+    public static function make(): ?static
     {
-        if ($key = static::getKey()) {
-            /**
-             * @var null|ReferrerSourceFullArray $sources
-             */
-            $sources = Session::get($key);
-
-            if ($sources) {
-                return static::fromArray($sources);
-            }
+        if ($key = static::getKeyFromConfig()) {
+            return new static($key);
         }
 
         return null;
     }
 
-    public static function forget(): void
+    public static function getKeyFromConfig(): ?string
     {
-        if ($key = static::getKey()) {
-            Session::forget($key);
+        /** @var ?string */
+        return config('referrer.drivers.'.static::class.'.key');
+    }
+
+    public function put(ReferrerSources $sources): void
+    {
+        Session::put(
+            $this->key,
+            $sources->toArray()
+        );
+    }
+
+    public function get(): ?ReferrerSources
+    {
+        /**
+         * @var null|ReferrerSourceFullArray $sources
+         */
+        $sources = Session::get($this->key);
+
+        if ($sources) {
+            return ReferrerSources::fromArray($sources);
         }
+
+        return null;
+    }
+
+    public function forget(): void
+    {
+        Session::forget($this->key);
     }
 }

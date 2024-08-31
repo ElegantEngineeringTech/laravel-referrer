@@ -7,16 +7,18 @@ use ArrayIterator;
 use Countable;
 use Elegantly\Referrer\Sources\ReferrerSource;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Collection;
+use Illuminate\Contracts\Support\Jsonable;
 use IteratorAggregate;
 use Traversable;
 
 /**
- * @implements Arrayable<class-string<ReferrerSource<mixed>>, ReferrerSource<mixed>>
+ * @phpstan-type ReferrerSourceFullArray array<class-string<ReferrerSource<mixed>>, array<string, mixed>>
+ *
+ * @implements Arrayable<class-string<ReferrerSource<mixed>>, array<string, mixed>>
  * @implements ArrayAccess<class-string<ReferrerSource<mixed>>, ReferrerSource<mixed>>
  * @implements IteratorAggregate<class-string<ReferrerSource<mixed>>, ReferrerSource<mixed>>
  */
-class ReferrerSources implements Arrayable, ArrayAccess, Countable, IteratorAggregate
+class ReferrerSources implements Arrayable, ArrayAccess, Countable, IteratorAggregate, Jsonable
 {
     /**
      * @param  array<class-string<ReferrerSource<mixed>>, ReferrerSource<mixed>>  $items
@@ -25,7 +27,6 @@ class ReferrerSources implements Arrayable, ArrayAccess, Countable, IteratorAggr
         public array $items = []
     ) {
         //
-        new Collection;
     }
 
     /**
@@ -71,9 +72,36 @@ class ReferrerSources implements Arrayable, ArrayAccess, Countable, IteratorAggr
         return new static($items);
     }
 
-    public function toArray(): array
+    /**
+     * @return array<class-string<ReferrerSource<mixed>>, ReferrerSource<mixed>>
+     */
+    public function all(): array
     {
         return $this->items;
+    }
+
+    public function toArray(): array
+    {
+        return array_map(fn ($item) => $item->toArray(), $this->items);
+    }
+
+    public function toJson($options = 0)
+    {
+        return (string) json_encode($this->toArray(), $options);
+    }
+
+    /**
+     * @param  ReferrerSourceFullArray  $sources
+     */
+    public static function fromArray(array $sources): static
+    {
+        $items = new static;
+
+        foreach ($sources as $source => $values) {
+            $items->put($source::fromArray($values));
+        }
+
+        return $items;
     }
 
     public function count(): int

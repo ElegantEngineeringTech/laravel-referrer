@@ -36,6 +36,10 @@ return [
         ],
         \Elegantly\Referrer\Drivers\CookieDriver::class => [
             'key' => null,
+            /**
+             * Lifetime in seconds
+             */
+            'lifetime' => 60 * 60 * 24 * 365,
         ],
     ],
 ];
