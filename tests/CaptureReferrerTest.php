@@ -17,8 +17,7 @@ it('can capture referrer from utm', function ($driver) {
 
     $this->get('/'); // this sould not override the captured referrer
 
-    /** @var ?UtmReferrerSource $source */
-    $source = Referrer::getSource(UtmReferrerSource::class, $driver);
+    $source = Referrer::getSources($driver)->get(UtmReferrerSource::class);
 
     expect($source?->utm_source)->toBe('google');
     expect($source?->utm_campaign)->toBe('spring_sale');
@@ -26,10 +25,9 @@ it('can capture referrer from utm', function ($driver) {
     expect($source?->utm_term)->toBe('sales');
     expect($source?->utm_content)->toBe('button');
 
-    /** @var ?RequestHeaderSource $source */
-    $source = Referrer::getSource(RequestHeaderSource::class, $driver);
+    $source = Referrer::getSources($driver)->get(RequestHeaderSource::class);
 
-    expect($source?->referrer)->toBe('example.com');
+    expect($source?->referer)->toBe('example.com');
 })->with([
     [SessionDriver::class],
     [ContextDriver::class],

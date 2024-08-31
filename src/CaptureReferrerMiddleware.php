@@ -22,7 +22,7 @@ class CaptureReferrerMiddleware
     {
         $sources = $this->getReferrerBySource($request);
 
-        if (! empty($sources)) {
+        if ($sources->count()) {
             /**
              * @var array<class-string<ReferrerDriver>, mixed> $drivers
              */
@@ -36,12 +36,9 @@ class CaptureReferrerMiddleware
         return $next($request);
     }
 
-    /**
-     * @return ReferrerSourceArray
-     */
-    public function getReferrerBySource(Request $request): array
+    public function getReferrerBySource(Request $request): ReferrerSources
     {
-        $results = [];
+        $items = new ReferrerSources;
 
         /**
          * @var class-string<ReferrerSource<mixed>>[]
@@ -52,10 +49,10 @@ class CaptureReferrerMiddleware
             $source = $sourceName::fromRequest($request);
 
             if (! $source->isEmpty()) {
-                $results[$sourceName] = $source;
+                $items->put($source);
             }
         }
 
-        return $results;
+        return $items;
     }
 }

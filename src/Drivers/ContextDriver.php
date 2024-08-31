@@ -2,6 +2,7 @@
 
 namespace Elegantly\Referrer\Drivers;
 
+use Elegantly\Referrer\ReferrerSources;
 use Illuminate\Support\Facades\Context;
 
 /**
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Context;
  */
 class ContextDriver extends ReferrerDriver
 {
-    public static function put(array $sources): void
+    public static function put(ReferrerSources $sources): void
     {
         if ($key = static::getKey()) {
             Context::add(
@@ -19,11 +20,11 @@ class ContextDriver extends ReferrerDriver
         }
     }
 
-    public static function get(): ?array
+    public static function get(): ?ReferrerSources
     {
         if ($key = static::getKey()) {
             /**
-             * @var ReferrerSourceFullArray $sources
+             * @var null|ReferrerSourceFullArray $sources
              */
             $sources = Context::get($key);
 

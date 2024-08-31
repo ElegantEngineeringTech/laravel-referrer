@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class RequestHeaderSource extends ReferrerSource
 {
     final public function __construct(
-        public ?string $referrer = null,
+        public ?string $referer = null,
 
     ) {
         //
@@ -18,37 +18,37 @@ class RequestHeaderSource extends ReferrerSource
 
     public function isEmpty(): bool
     {
-        return blank($this->referrer);
+        return blank($this->referer);
     }
 
     public static function fromRequest(Request $request): static
     {
         return new static(
-            referrer: $request->header('referer'), // spelling is a known mistake
+            referer: $request->header('referer'), // spelling is a known mistake
         );
     }
 
     /**
      * @param array{
-     *      referrer?: string|null,
+     *      referer?: string|null,
      *  } $values
      */
     public static function fromArray(array $values): static
     {
         return new static(
-            referrer: $values['referrer'] ?? null,
+            referer: $values['referer'] ?? null,
         );
     }
 
     /**
      * @return array{
-     *      referrer?: string|null,
+     *      referer?: string|null,
      *  }
      */
     public function toArray(): array
     {
         return [
-            'referrer' => $this->referrer,
+            'referer' => $this->referer,
         ];
     }
 }

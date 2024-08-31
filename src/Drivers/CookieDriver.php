@@ -2,6 +2,7 @@
 
 namespace Elegantly\Referrer\Drivers;
 
+use Elegantly\Referrer\ReferrerSources;
 use Illuminate\Support\Facades\Cookie;
 
 /**
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Cookie;
  */
 class CookieDriver extends ReferrerDriver
 {
-    public static function put(array $sources): void
+    public static function put(ReferrerSources $sources): void
     {
         if ($key = static::getKey()) {
             Cookie::queue(
@@ -19,14 +20,15 @@ class CookieDriver extends ReferrerDriver
         }
     }
 
-    public static function get(): ?array
+    public static function get(): ?ReferrerSources
     {
         if ($key = static::getKey()) {
             $cookie = Cookie::get($key);
+
             /**
              * @var null|ReferrerSourceFullArray $sources
              */
-            $sources = is_string($cookie) ? json_decode($cookie, true) : null;
+            $sources = is_string($cookie) ? json_decode($cookie) : null;
 
             if ($sources) {
                 return static::fromArray($sources);

@@ -3,100 +3,53 @@
 namespace Elegantly\Referrer;
 
 use Elegantly\Referrer\Drivers\ReferrerDriver;
-use Elegantly\Referrer\Sources\ReferrerSource;
-use Illuminate\Support\Collection;
 
-/**
- * @phpstan-import-type ReferrerSourceArray from ReferrerDriver
- *
- * @phpstan-type ReferrerDriverArray array<class-string<ReferrerDriver>, ReferrerSourceArray|null>
- */
 class Referrer
 {
-    public function make(): self
-    {
-        return new self;
-    }
-
     /**
-     * @param  class-string<ReferrerDriver>  $driver
-     * @return ReferrerSourceArray|null
+     * @return array<class-string<ReferrerDriver>, null|ReferrerSources>
      */
-    public function getDriver(string $driver): ?array
+    public function getSroucesByDriver(): array
     {
-        return $driver::get();
-    }
-
-    /**
-     * @template TSource of ReferrerSource<mixed>
-     *
-     * @param  class-string<TSource>  $source
-     * @param  null|class-string<ReferrerDriver>  $driver
-     * @return null|TSource
-     */
-    public function getSource(string $source, ?string $driver = null)
-    {
-        if ($driver && $driverValue = $this->getDriver($driver)) {
-            /** @var null|TSource */
-            $value = $driverValue[$source] ?? null;
-        } else {
-            /** @var null|TSource */
-            $value = $this->getSources()[$source] ?? null;
-        }
-
-        return $value;
-    }
-
-    /**
-     * @return ReferrerDriverArray
-     */
-    public function getDrivers(): array
-    {
-        /**
-         * @var array<class-string<ReferrerDriver>, mixed> $drivers
-         */
-        $drivers = config('referrer.drivers') ?? [];
-
         $results = [];
 
-        foreach ($drivers as $driver => $options) {
-            $results[$driver] = $this->getDriver($driver);
+        foreach ($this->getDriversFromConfig() as $driver => $options) {
+            $results[$driver] = $driver::get();
         }
 
         return $results;
     }
 
     /**
-     * @return ReferrerSourceArray
+     * @param  class-string<ReferrerDriver>  $driver
      */
-    public function getSources(): array
+    public function getSources(?string $driver = null): ?ReferrerSources
     {
+        if ($driver) {
+            return $driver::get();
+        }
+
         return array_reduce(
-            $this->getDrivers(),
-            function (array $result, ?array $sources) {
-                if ($sources) {
-                    return array_merge($sources, $result);
+            $this->getSroucesByDriver(),
+            function (ReferrerSources $result, ?ReferrerSources $sources) {
+                if ($sources && $sources->count()) {
+                    return $sources->merge($result);
                 }
 
                 return $result;
             },
-            []
+            new ReferrerSources
         );
     }
 
     /**
-     * @return Collection<class-string<ReferrerDriver>, null|ReferrerSourceArray>
+     * @return array<class-string<ReferrerDriver>, mixed>
      */
-    public function collectDrivers(): Collection
+    public function getDriversFromConfig(): array
     {
-        return collect($this->getDrivers());
-    }
-
-    /**
-     * @return Collection<class-string<ReferrerSource<mixed>>, ReferrerSource<mixed>>
-     */
-    public function collectSources(): Collection
-    {
-        return collect($this->getSources());
+        /**
+         * @var array<class-string<ReferrerDriver>, mixed>
+         */
+        return config('referrer.drivers') ?? [];
     }
 }
