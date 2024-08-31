@@ -115,7 +115,7 @@ class Kernel extends HttpKernel
 You can retrieve the referrer sources using the facade:
 
 ```php
-\Elegantly\Referrer\Facades\Referrer::getSources(); // Merges all drivers together, with the first one having priority over the next
+\Elegantly\Referrer\Facades\Referrer::getSources(); // Merges all drivers together, with the first one having priority over the next ones
 \Elegantly\Referrer\Facades\Referrer::getSourcesByDriver(); // Retrieves all driver values
 ```
 
@@ -139,7 +139,7 @@ class RegisteredUserController extends Controller
 
         $user = new User($validated);
 
-        $user->referrer = Referrer::getSource(UtmReferrerSource::class)->utm_source;
+        $user->referrer = Referrer::getSources()->get(UtmReferrerSource::class)->utm_source;
 
         $user->save();
 
