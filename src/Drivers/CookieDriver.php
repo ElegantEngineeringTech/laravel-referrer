@@ -33,13 +33,13 @@ class CookieDriver extends ReferrerDriver
     public static function getKeyFromConfig(): ?string
     {
         /** @var ?string */
-        return config('referrer.drivers.' . static::class . '.key');
+        return config('referrer.drivers.'.static::class.'.key');
     }
 
     public static function getLifetimeFromConfig(): int
     {
         /** @var int */
-        return config('referrer.drivers.' . static::class . '.lifetime') ?? (60 * 60 * 24 * 30 * 6);
+        return config('referrer.drivers.'.static::class.'.lifetime') ?? (60 * 60 * 24 * 30 * 6);
     }
 
     public function put(ReferrerSources $sources): void
