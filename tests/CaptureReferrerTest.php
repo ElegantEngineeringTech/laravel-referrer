@@ -9,7 +9,7 @@ use Elegantly\Referrer\Sources\UtmReferrerSource;
 
 it('can capture referrer from utm', function ($driver) {
 
-    config()->set('referrer.drivers.' . $driver . '.key', 'referrer');
+    config()->set('referrer.drivers.'.$driver.'.key', 'referrer');
 
     $this
         ->get('/?utm_source=google&utm_medium=email&utm_campaign=spring_sale&utm_id=1234&utm_term=sales&utm_content=button', ['Referer' => 'example.com'])
