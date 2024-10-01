@@ -49,6 +49,9 @@ return [
     'sources' => [
         \Elegantly\Referrer\Sources\UtmReferrerSource::class,
         \Elegantly\Referrer\Sources\RequestHeaderSource::class,
+        \Elegantly\Referrer\Sources\GoogleClickIdSource::class,
+        \Elegantly\Referrer\Sources\MetaClickIdSource::class,
+        \Elegantly\Referrer\Sources\TikTokClickIdSource::class,
     ],
 
     /*
@@ -63,19 +66,19 @@ return [
     |
     */
     'drivers' => [
-        \Elegantly\Referrer\Drivers\ContextDriver::class => [
-            'key' => null,
-        ],
-        \Elegantly\Referrer\Drivers\SessionDriver::class => [
-            'key' => null,
-        ],
-        \Elegantly\Referrer\Drivers\CookieDriver::class => [
-            'key' => null,
-            /**
-             * Lifetime in seconds
-             */
-            'lifetime' => 60 * 60 * 24 * 365,
-        ],
+        // \Elegantly\Referrer\Drivers\ContextDriver::class => [
+        //     'key' => 'referrer',
+        // ],
+        // \Elegantly\Referrer\Drivers\SessionDriver::class => [
+        //     'key' => 'referrer',
+        // ],
+        // \Elegantly\Referrer\Drivers\CookieDriver::class => [
+        //     'key' => Str::slug(env('APP_NAME', 'laravel'), '_').'referrer',
+        //     /**
+        //      * Lifetime in seconds
+        //      */
+        //     'lifetime' => 60 * 60 * 24 * 365,
+        // ],
     ],
 ];
 ```
