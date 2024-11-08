@@ -92,6 +92,74 @@ class ReferrerSources implements Arrayable, Countable, IteratorAggregate, Jsonab
     }
 
     /**
+     * Oldest source based on timestamp
+     *
+     * @return null|ReferrerSource<mixed>
+     */
+    public function getOldest(): ?ReferrerSource
+    {
+        /** @var null|ReferrerSource<mixed> $oldest */
+        $oldest = null;
+
+        foreach ($this as $values) {
+            foreach ($values as $value) {
+
+                if (! $oldest) {
+                    $oldest = $value;
+                } elseif (
+                    ! $oldest->timestamp &&
+                    $value->timestamp
+                ) {
+                    $oldest = $value;
+                } elseif (
+                    $oldest->timestamp &&
+                    $value->timestamp &&
+                    $value->timestamp < $oldest->timestamp
+                ) {
+                    $oldest = $value;
+                }
+
+            }
+        }
+
+        return $oldest;
+    }
+
+    /**
+     * Most recent source based on timestamp
+     *
+     * @return null|ReferrerSource<mixed>
+     */
+    public function getLatest(): ?ReferrerSource
+    {
+        /** @var null|ReferrerSource<mixed> $latest */
+        $latest = null;
+
+        foreach ($this as $values) {
+            foreach ($values as $value) {
+
+                if (! $latest) {
+                    $latest = $value;
+                } elseif (
+                    ! $latest->timestamp &&
+                    $value->timestamp
+                ) {
+                    $latest = $value;
+                } elseif (
+                    $latest->timestamp &&
+                    $value->timestamp &&
+                    $value->timestamp >= $latest->timestamp
+                ) {
+                    $latest = $value;
+                }
+
+            }
+        }
+
+        return $latest;
+    }
+
+    /**
      * @param  ReferrerSource<mixed>  $source
      * @return $this
      */

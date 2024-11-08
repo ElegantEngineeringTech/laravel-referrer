@@ -13,6 +13,8 @@ use Stringable;
  */
 abstract class ReferrerSource implements Arrayable, Stringable
 {
+    public ?float $timestamp = null;
+
     abstract public static function fromRequest(Request $request): static;
 
     /**
