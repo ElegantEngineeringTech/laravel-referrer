@@ -13,6 +13,7 @@ class MetaClickIdSource extends ReferrerSource
 {
     final public function __construct(
         public ?string $fbclid = null,
+        public ?float $timestamp = null,
 
     ) {
         //
@@ -27,30 +28,40 @@ class MetaClickIdSource extends ReferrerSource
     {
         return new static(
             fbclid: $request->string('fbclid')->value() ?: null,
+            timestamp: (float) $request->server('REQUEST_TIME')
         );
     }
 
     /**
      * @param array{
      *      fbclid?: string|null,
+     *      timestamp?: float|null,
      *  } $values
      */
     public static function fromArray(array $values): static
     {
         return new static(
             fbclid: $values['fbclid'] ?? null,
+            timestamp: $values['timestamp'] ?? null,
         );
     }
 
     /**
      * @return array{
      *      fbclid?: string|null,
+     *      timestamp?: float|null,
      *  }
      */
     public function toArray(): array
     {
         return [
             'fbclid' => $this->fbclid,
+            'timestamp' => $this->timestamp,
         ];
+    }
+
+    public function __toString(): string
+    {
+        return $this->fbclid ?? '';
     }
 }

@@ -3,9 +3,81 @@
 namespace Elegantly\Referrer;
 
 use Elegantly\Referrer\Drivers\ReferrerDriver;
+use Elegantly\Referrer\Enums\Strategy;
+use Elegantly\Referrer\Sources\ReferrerSource;
 
 class Referrer
 {
+    /**
+     * @return array<int, class-string<ReferrerDriver>>
+     */
+    public function getDriversFromConfig(): array
+    {
+        /**
+         * @var array<int|class-string<ReferrerDriver>, class-string<ReferrerDriver>|mixed[]>
+         */
+        $config = config('referrer.drivers') ?? [];
+
+        $drivers = [];
+
+        foreach ($config as $key => $value) {
+            if (is_string($value)) {
+                $drivers[] = $value;
+            } elseif (is_string($key)) {
+                $drivers[] = $key;
+            }
+        }
+
+        return $drivers;
+    }
+
+    /**
+     * @return array<int, class-string<ReferrerSource<mixed>>>
+     */
+    public function getSourcesFromConfig(): array
+    {
+        /**
+         * @var array<int|class-string<ReferrerSource<mixed>>, class-string<ReferrerSource<mixed>>|mixed[]>
+         */
+        $config = config('referrer.sources') ?? [];
+
+        $sources = [];
+
+        foreach ($config as $key => $value) {
+            if (is_string($value)) {
+                $sources[] = $value;
+            } elseif (is_string($key)) {
+                $sources[] = $key;
+            }
+        }
+
+        return $sources;
+    }
+
+    /**
+     * @param  null|class-string<ReferrerSource<mixed>>|ReferrerSource<mixed>  $source
+     */
+    public function getStrategy(null|ReferrerSource|string $source = null): Strategy
+    {
+        if ($source) {
+            $source = $source instanceof ReferrerSource ? $source::class : $source;
+
+            /**
+             * @var ?Strategy
+             */
+            $config = config("referrer.sources.{$source}.strategy");
+
+            return $config ?: $this->getStrategy();
+        }
+
+        /**
+         * @var Strategy
+         */
+        $strategy = config('referrer.strategy');
+
+        return $strategy;
+    }
+
     /**
      * @return array<class-string<ReferrerDriver>, null|ReferrerSources>
      */
@@ -13,57 +85,69 @@ class Referrer
     {
         $results = [];
 
-        foreach ($this->getDriversFromConfig() as $driverName => $options) {
-            $results[$driverName] = $driverName::make()?->get();
+        $drivers = $this->getDriversFromConfig();
+
+        foreach ($drivers as $driver) {
+            $results[$driver] = $driver::make()->get();
         }
 
         return $results;
     }
 
     /**
-     * @param  class-string<ReferrerDriver>  $driverName
+     * @param  null|class-string<ReferrerDriver>  $driver
      */
-    public function get(?string $driverName = null): ReferrerSources
-    {
-        if ($driverName) {
-            return $driverName::make()?->get() ?? new ReferrerSources;
+    public function getSources(
+        ?string $driver = null
+    ): ReferrerSources {
+        if ($driver) {
+            return $driver::make()->get() ?? new ReferrerSources;
         }
 
-        return array_reduce(
-            $this->getSourcesByDriver(),
-            function (ReferrerSources $result, ?ReferrerSources $sources) {
-                if ($sources && $sources->count()) {
-                    return $sources->merge($result);
-                }
+        $sources = new ReferrerSources;
 
-                return $result;
-            },
-            new ReferrerSources
-        );
-    }
+        $drivers = $this->getDriversFromConfig();
 
-    public function forget(): void
-    {
-        foreach ($this->getDriversFromConfig() as $driverName => $options) {
-            $driverName::make()?->forget();
+        foreach ($drivers as $driver) {
+            $sources = $sources->merge($driver::make()->get());
         }
-    }
 
-    public function put(ReferrerSources $sources): void
-    {
-        foreach ($this->getDriversFromConfig() as $driverName => $options) {
-            $driverName::make()?->put($sources);
-        }
+        return $sources;
     }
 
     /**
-     * @return array<class-string<ReferrerDriver>, mixed>
+     * @param  null|class-string<ReferrerDriver>  $driver
      */
-    public function getDriversFromConfig(): array
-    {
-        /**
-         * @var array<class-string<ReferrerDriver>, mixed>
-         */
-        return config('referrer.drivers') ?? [];
+    public function forget(
+        ?string $driver = null
+    ): void {
+        if ($driver) {
+            $driver::make()->forget();
+        } else {
+            $drivers = $this->getDriversFromConfig();
+
+            foreach ($drivers as $driver) {
+                $driver::make()->forget();
+            }
+        }
+
+    }
+
+    /**
+     * @param  null|class-string<ReferrerDriver>  $driver
+     */
+    public function put(
+        ReferrerSources $sources,
+        ?string $driver = null
+    ): void {
+        if ($driver) {
+            $driver::make()->put($sources);
+        } else {
+            $drivers = $this->getDriversFromConfig();
+
+            foreach ($drivers as $driver) {
+                $driver::make()->put($sources);
+            }
+        }
     }
 }

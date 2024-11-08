@@ -7,46 +7,40 @@ use Illuminate\Support\Facades\Cookie;
 use Symfony\Component\HttpFoundation\Cookie as SymfonyCookie;
 
 /**
- * @phpstan-import-type ReferrerSourceFullArray from ReferrerDriver
+ * @phpstan-import-type ReferrerSourcesArray from ReferrerSources
  */
 class CookieDriver extends ReferrerDriver
 {
     final public function __construct(
-        public string $key,
+        public string $name,
         public int $lifetime,
     ) {
         //
     }
 
-    public static function make(): ?static
+    public static function make(): static
     {
-        if ($key = static::getKeyFromConfig()) {
-            return new static(
-                $key,
-                static::getLifetimeFromConfig()
-            );
-        }
-
-        return null;
+        return new static(
+            name: static::getNameFromConfig(),
+            lifetime: static::getLifetimeFromConfig()
+        );
     }
 
-    public static function getKeyFromConfig(): ?string
+    public static function getNameFromConfig(): string
     {
-        /** @var ?string */
-        return config('referrer.drivers.'.static::class.'.key');
+        return config()->string('referrer.drivers.'.static::class.'.name');
     }
 
     public static function getLifetimeFromConfig(): int
     {
-        /** @var int */
-        return config('referrer.drivers.'.static::class.'.lifetime') ?? (60 * 60 * 24 * 30 * 6);
+        return config()->integer('referrer.drivers.'.static::class.'.lifetime');
     }
 
     public function put(ReferrerSources $sources): void
     {
         Cookie::queue(
             new SymfonyCookie(
-                name: $this->key,
+                name: $this->name,
                 value: $sources->toJson(),
                 expire: now()->addSeconds($this->lifetime)
             )
@@ -55,10 +49,10 @@ class CookieDriver extends ReferrerDriver
 
     public function get(): ?ReferrerSources
     {
-        $cookie = Cookie::get($this->key);
+        $cookie = Cookie::get($this->name);
 
         /**
-         * @var null|ReferrerSourceFullArray $sources
+         * @var null|ReferrerSourcesArray $sources
          */
         $sources = is_string($cookie) ? json_decode($cookie, true) : null;
 
@@ -71,6 +65,6 @@ class CookieDriver extends ReferrerDriver
 
     public function forget(): void
     {
-        Cookie::forget($this->key);
+        Cookie::forget($this->name);
     }
 }

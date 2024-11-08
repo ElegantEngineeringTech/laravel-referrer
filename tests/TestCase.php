@@ -14,7 +14,7 @@ class TestCase extends Orchestra
     {
         parent::setUp();
 
-        $this->app['router']->get('/', fn () => Referrer::get())->middleware(CaptureReferrerMiddleware::class);
+        $this->app['router']->get('/', fn () => 'ok')->middleware(CaptureReferrerMiddleware::class);
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Elegantly\\Referrer\\Database\\Factories\\'.class_basename($modelName).'Factory'

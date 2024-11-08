@@ -4,13 +4,14 @@ namespace Elegantly\Referrer\Sources;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
+use Stringable;
 
 /**
  * @template TValue
  *
  * @implements Arrayable<string, TValue>
  */
-abstract class ReferrerSource implements Arrayable
+abstract class ReferrerSource implements Arrayable, Stringable
 {
     abstract public static function fromRequest(Request $request): static;
 
@@ -19,10 +20,27 @@ abstract class ReferrerSource implements Arrayable
      */
     abstract public static function fromArray(array $values): static;
 
+    abstract public function isEmpty(): bool;
+
+    public function isNotEmpty(): bool
+    {
+        return ! $this->isEmpty();
+    }
+
     /**
      * @return array<string, TValue>
      */
     abstract public function toArray(): array;
 
-    abstract public function isEmpty(): bool;
+    /**
+     * @param  null|string|ReferrerSource<mixed>  $source
+     */
+    public function is(null|string|ReferrerSource $source): bool
+    {
+        if (! $source) {
+            return false;
+        }
+
+        return strval($this) === strval($source);
+    }
 }

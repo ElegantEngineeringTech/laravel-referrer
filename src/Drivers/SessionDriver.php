@@ -6,7 +6,7 @@ use Elegantly\Referrer\ReferrerSources;
 use Illuminate\Support\Facades\Session;
 
 /**
- * @phpstan-import-type ReferrerSourceFullArray from ReferrerSources
+ * @phpstan-import-type ReferrerSourcesArray from ReferrerSources
  */
 class SessionDriver extends ReferrerDriver
 {
@@ -16,19 +16,16 @@ class SessionDriver extends ReferrerDriver
         //
     }
 
-    public static function make(): ?static
+    public static function make(): static
     {
-        if ($key = static::getKeyFromConfig()) {
-            return new static($key);
-        }
-
-        return null;
+        return new static(
+            key: static::getKeyFromConfig()
+        );
     }
 
-    public static function getKeyFromConfig(): ?string
+    public static function getKeyFromConfig(): string
     {
-        /** @var ?string */
-        return config('referrer.drivers.'.static::class.'.key');
+        return config()->string('referrer.drivers.'.static::class.'.key');
     }
 
     public function put(ReferrerSources $sources): void
@@ -42,7 +39,7 @@ class SessionDriver extends ReferrerDriver
     public function get(): ?ReferrerSources
     {
         /**
-         * @var null|ReferrerSourceFullArray $sources
+         * @var null|ReferrerSourcesArray $sources
          */
         $sources = Session::get($this->key);
 

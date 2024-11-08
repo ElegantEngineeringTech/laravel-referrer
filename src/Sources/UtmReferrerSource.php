@@ -40,6 +40,7 @@ class UtmReferrerSource extends ReferrerSource
          * Ex: logolink
          */
         public ?string $utm_content = null,
+        public ?float $timestamp = null,
     ) {
         //
     }
@@ -58,6 +59,7 @@ class UtmReferrerSource extends ReferrerSource
             utm_campaign: $request->string('utm_campaign')->value() ?: null,
             utm_term: $request->string('utm_term')->value() ?: null,
             utm_content: $request->string('utm_content')->value() ?: null,
+            timestamp: (float) $request->server('REQUEST_TIME')
         );
     }
 
@@ -69,6 +71,7 @@ class UtmReferrerSource extends ReferrerSource
      *      utm_campaign?: string|null,
      *      utm_term?: string|null,
      *      utm_content?: string|null,
+     *      timestamp?: float|null,
      *  } $values
      */
     public static function fromArray(array $values): static
@@ -80,6 +83,7 @@ class UtmReferrerSource extends ReferrerSource
             utm_campaign: $values['utm_campaign'] ?? null,
             utm_term: $values['utm_term'] ?? null,
             utm_content: $values['utm_content'] ?? null,
+            timestamp: $values['timestamp'] ?? null,
         );
     }
 
@@ -91,6 +95,7 @@ class UtmReferrerSource extends ReferrerSource
      *      utm_campaign: string|null,
      *      utm_term: string|null,
      *      utm_content: string|null,
+     *      timestamp?: float|null,
      *  }
      */
     public function toArray(): array
@@ -102,6 +107,12 @@ class UtmReferrerSource extends ReferrerSource
             'utm_campaign' => $this->utm_campaign,
             'utm_term' => $this->utm_term,
             'utm_content' => $this->utm_content,
+            'timestamp' => $this->timestamp,
         ];
+    }
+
+    public function __toString(): string
+    {
+        return implode('&', array_filter($this->toArray()));
     }
 }

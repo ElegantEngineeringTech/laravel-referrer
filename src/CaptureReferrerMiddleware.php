@@ -4,13 +4,9 @@ namespace Elegantly\Referrer;
 
 use Closure;
 use Elegantly\Referrer\Facades\Referrer;
-use Elegantly\Referrer\Sources\ReferrerSource;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @phpstan-import-type ReferrerSourceArray from \Elegantly\Referrer\Drivers\ReferrerDriver
- */
 class CaptureReferrerMiddleware
 {
     /**
@@ -31,18 +27,22 @@ class CaptureReferrerMiddleware
 
     public function getReferrerBySource(Request $request): ReferrerSources
     {
-        $items = new ReferrerSources;
+        $items = Referrer::getSources();
 
-        /**
-         * @var class-string<ReferrerSource<mixed>>[]
-         */
-        $sources = config('referrer.sources') ?? [];
+        $sources = Referrer::getSourcesFromConfig();
 
         foreach ($sources as $sourceName) {
+            $strategy = Referrer::getStrategy($sourceName);
             $source = $sourceName::fromRequest($request);
 
-            if (! $source->isEmpty()) {
-                $items->put($source);
+            if (
+                $source->isNotEmpty() &&
+                ! $items->has($source)
+            ) {
+                $items->put(
+                    source: $source,
+                    strategy: $strategy
+                );
             }
         }
 

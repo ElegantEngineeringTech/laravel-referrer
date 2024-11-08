@@ -3,15 +3,10 @@
 namespace Elegantly\Referrer\Drivers;
 
 use Elegantly\Referrer\ReferrerSources;
-use Elegantly\Referrer\Sources\ReferrerSource;
 
-/**
- * @phpstan-type ReferrerSourceFullArray array<class-string<ReferrerSource<mixed>>, array<string, mixed>>
- * @phpstan-type ReferrerSourceArray array<class-string<ReferrerSource<mixed>>, ReferrerSource<mixed>>
- */
 abstract class ReferrerDriver
 {
-    abstract public static function make(): ?static;
+    abstract public static function make(): static;
 
     abstract public function put(ReferrerSources $sources): void;
 

@@ -6,7 +6,7 @@ use Elegantly\Referrer\ReferrerSources;
 use Illuminate\Support\Facades\Context;
 
 /**
- * @phpstan-import-type ReferrerSourceFullArray from ReferrerSources
+ * @phpstan-import-type ReferrerSourcesArray from ReferrerSources
  */
 class ContextDriver extends ReferrerDriver
 {
@@ -16,33 +16,30 @@ class ContextDriver extends ReferrerDriver
         //
     }
 
-    public static function make(): ?static
+    public static function make(): static
     {
-        if ($key = static::getKeyFromConfig()) {
-            return new static($key);
-        }
-
-        return null;
+        return new static(
+            key: static::getKeyFromConfig()
+        );
     }
 
-    public static function getKeyFromConfig(): ?string
+    public static function getKeyFromConfig(): string
     {
-        /** @var ?string */
-        return config('referrer.drivers.'.static::class.'.key');
+        return config()->string('referrer.drivers.'.static::class.'.key');
     }
 
     public function put(ReferrerSources $sources): void
     {
         Context::add(
-            $this->key,
-            $sources->toArray()
+            key: $this->key,
+            value: $sources->toArray()
         );
     }
 
     public function get(): ?ReferrerSources
     {
         /**
-         * @var null|ReferrerSourceFullArray $sources
+         * @var null|ReferrerSourcesArray $sources
          */
         $sources = Context::get($this->key);
 
