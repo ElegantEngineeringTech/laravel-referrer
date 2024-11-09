@@ -10,6 +10,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
 use IteratorAggregate;
+use Stringable;
 use Traversable;
 
 /**
@@ -19,7 +20,7 @@ use Traversable;
  * @implements Arrayable< class-string<ReferrerSource<mixed>>, array<int, mixed[]> >
  * @implements IteratorAggregate< class-string<ReferrerSource<mixed>> , array<int, ReferrerSource<mixed>> >
  */
-class ReferrerSources implements Arrayable, Countable, IteratorAggregate, Jsonable
+class ReferrerSources implements Arrayable, Countable, IteratorAggregate, Jsonable, Stringable
 {
     /**
      * @param  ReferrerSourcesItems  $items
@@ -260,6 +261,11 @@ class ReferrerSources implements Arrayable, Countable, IteratorAggregate, Jsonab
     public function toJson($options = 0): string
     {
         return (string) json_encode($this->toArray(), $options);
+    }
+
+    public function __toString(): string
+    {
+        return $this->toJson();
     }
 
     /**
