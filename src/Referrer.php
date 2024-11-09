@@ -73,7 +73,7 @@ class Referrer
         /**
          * @var Strategy
          */
-        $strategy = config('referrer.strategy');
+        $strategy = config('referrer.strategy', Strategy::All);
 
         return $strategy;
     }
