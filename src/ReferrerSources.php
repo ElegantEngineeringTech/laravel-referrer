@@ -272,7 +272,7 @@ class ReferrerSources implements Arrayable, Countable, IteratorAggregate, Jsonab
         foreach ($sources as $source => $values) {
 
             foreach ($values as $value) {
-                $items->add($source::fromArray($value));
+                rescue(fn () => $items->add($source::fromArray($value)));
             }
 
         }
