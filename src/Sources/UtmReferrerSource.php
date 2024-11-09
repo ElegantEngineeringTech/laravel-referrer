@@ -3,6 +3,7 @@
 namespace Elegantly\Referrer\Sources;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 /**
  * @extends ReferrerSource<string|null>
@@ -113,6 +114,8 @@ class UtmReferrerSource extends ReferrerSource
 
     public function __toString(): string
     {
-        return implode('&', array_filter($this->toArray()));
+        return http_build_query(
+            Arr::except($this->toArray(), ['timestamp'])
+        );
     }
 }

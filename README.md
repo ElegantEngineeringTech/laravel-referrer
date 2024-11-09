@@ -5,14 +5,29 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/elegantengineeringtech/laravel-referrer/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/elegantengineeringtech/laravel-referrer/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/elegantly/laravel-referrer.svg?style=flat-square)](https://packagist.org/packages/elegantly/laravel-referrer)
 
-This small package allows you to detect and store the visitor referrer so that you can access it later.
-
+This package allows you to detect and store the visitor referrer so that you can access it later.
 A typical use case would be saving the referrer in a database when a visitor registers in your app.
 
-The package is designed to be flexible regarding:
+Out of the box, it captures:
 
--   How you want to detect the referrer
--   How you want to store the referrer value
+-   Google Click ID (gclid)
+-   Meta Click ID (fbclid)
+-   TikTok Click ID (ttclid)
+-   Header referer value
+-   All url UTM values
+-   Or add your own source ...
+
+The package is designed to be very flexible regarding:
+
+-   How you want to detect the referrer.
+-   How you want to store the referrer value.
+
+Out of the box, it can store referrer values in:
+
+-   Laravel Context
+-   Laravel Session
+-   A Cookie
+-   Or add your own driver
 
 ## Installation
 
@@ -24,15 +39,15 @@ composer require elegantly/laravel-referrer
 
 ## Usage
 
-### Capturing the Visitor Referrer
-
 First, publish the config file with:
 
 ```bash
 php artisan vendor:publish --tag="referrer-config"
 ```
 
-This is the content of the published config file:
+### Installation
+
+Then configure your sources and drivers:
 
 ```php
 use Elegantly\Referrer\Enums\Strategy;
@@ -108,6 +123,8 @@ return [
 
 In the file, enable one or more drivers by uncommenting them.
 
+### Middleware configuration
+
 Next, add the `CaptureReferrerMiddleware` to your route:
 
 [Using Laravel v11](https://laravel.com/docs/11.x/middleware#registering-middleware):
@@ -140,16 +157,24 @@ class Kernel extends HttpKernel
 }
 ```
 
-### Handling Multiple Referrers
+And that's all, now your referrer's sources are automatically captured.
 
-What if a user encounters multiple referrers during their navigation? For example, a user might have clicked on multiple Google Ads campaigns or links with different UTM parameters.
+### Choosing a strategy
 
-In the config file, you can define the strategy to adopt for these cases. Here are some examples:
+What if a user encounters multiple referrers during their navigation?
+For example, a user might have clicked on multiple Google Ads campaigns or links with different UTM parameters.
 
-#### Capture the Latest Referrer
+This package supports 3 capture strategy:
+
+-   First: Only capture the first referrer of each source.
+-   Last: Only capture the last referrer of each source.
+-   All: Capture all referrer.
+
+From the config, you can define a strategy globally using:
 
 ```php
 use Elegantly\Referrer\Enums\Strategy;
+
 return [
     //...
     'strategy' => Strategy::Last,
@@ -157,40 +182,11 @@ return [
 ]
 ```
 
-This will store only the most recent referrer value and discard any previous ones.
-
-#### Capture the First Referrer
+But you can also define the strategy per source like this:
 
 ```php
 use Elegantly\Referrer\Enums\Strategy;
-return [
-    //...
-    'strategy' => Strategy::First,
-    //...
-]
-```
 
-This will store the first referrer value encountered and ignore any subsequent ones.
-
-#### Capture All Referrers
-
-```php
-use Elegantly\Referrer\Enums\Strategy;
-return [
-    //...
-    'strategy' => Strategy::All,
-    //...
-]
-```
-
-This will store all referrer values encountered.
-
-### Configuring the Strategy per Source
-
-You can also define a different strategy for each referrer source:
-
-```php
-use Elegantly\Referrer\Enums\Strategy;
 return [
     //...
     'strategy' => Strategy::Last, // Global strategy
@@ -208,15 +204,41 @@ return [
 ]
 ```
 
-In this example, the global strategy is set to `Strategy::Last`, but for the `UtmReferrerSource`, the strategy is set to `Strategy::First`.
-
 ### Retrieving the Visitor Referrer
 
 You can retrieve the referrer sources using the facade:
 
 ```php
-\Elegantly\Referrer\Facades\Referrer::getSources(); // Merges all drivers together, with the last one having priority over the previous ones
-\Elegantly\Referrer\Facades\Referrer::getSourcesByDriver(); // Retrieves all driver values
+use \Elegantly\Referrer\Facades\Referrer;
+
+Referrer::getSources(); // Merges all drivers together, with the last one having priority over the previous ones
+Referrer::getSourcesByDriver(); // Retrieves all drivers values
+```
+
+Retrieve the first or last referrer value:
+
+```php
+use \Elegantly\Referrer\Sources\UtmReferrerSource;
+use \Elegantly\Referrer\Sources\GoogleClickIdSource;
+use \Elegantly\Referrer\Facades\Referrer;
+
+Referrer::getSources()->getFirst(UtmReferrerSource::class);
+// Return an instance of UtmReferrerSource
+
+Referrer::getSources()->getLast(GoogleClickIdSource::class);
+// Return an instance of GoogleClickIdSource
+```
+
+Retrieve the oldest or latest referrer value from any source:
+
+```php
+use \Elegantly\Referrer\Facades\Referrer;
+
+Referrer::getSources()->getOldest();
+// Return an instance of ReferrerSource
+
+Referrer::getSources()->getLatest();
+// Return an instance of ReferrerSource
 ```
 
 Here is a full example inside a controller:
@@ -229,7 +251,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Elegantly\Referrer\Facades\Referrer;
-use Elegantly\Referrer\Sources\UtmReferrerSource;
+use \Elegantly\Referrer\Sources\UtmReferrerSource;
 
 class RegisteredUserController extends Controller
 {
@@ -239,7 +261,15 @@ class RegisteredUserController extends Controller
 
         $user = new User($validated);
 
-        $user->referrer = Referrer::getSources()->getFirst(UtmReferrerSource::class)?->utm_source;
+        /**
+         * The value returned will be the latest referrer value captured among all source
+        */
+        $user->referrer = (string) Referrer::getSources()->getLatest();
+
+        /**
+         * The value returned will be the first utm captured
+        */
+        $user->utm = (string) Referrer::getSources()->getFirst(UtmReferrerSource::class);
 
         $user->save();
 

@@ -4,6 +4,7 @@ use Elegantly\Referrer\Drivers\ContextDriver;
 use Elegantly\Referrer\Drivers\SessionDriver;
 use Elegantly\Referrer\Enums\Strategy;
 use Elegantly\Referrer\Facades\Referrer;
+use Elegantly\Referrer\Sources\ReferrerSource;
 use Elegantly\Referrer\Sources\RequestHeaderSource;
 use Elegantly\Referrer\Sources\UtmReferrerSource;
 
@@ -156,4 +157,39 @@ it('can capture the referrer using last strategy', function ($driver) {
 })->with([
     [SessionDriver::class],
     [ContextDriver::class],
+]);
+
+it('retreives the oldest and latest captured source', function ($driver) {
+
+    config()->set('referrer.strategy', Strategy::All);
+
+    config()->set('referrer.drivers', [
+        $driver => [
+            'key' => 'referrer',
+        ],
+    ]);
+
+    $this
+        ->get('/?utm_source=first')
+        ->assertStatus(200);
+
+    $this
+        ->get('/?utm_source=second')
+        ->assertStatus(200);
+
+    $this
+        ->get('/?utm_source=third')
+        ->assertStatus(200);
+
+    $oldest = Referrer::getSources()->getOldest();
+    $latest = Referrer::getSources()->getLatest();
+
+    expect($oldest)->toBeInstanceOf(ReferrerSource::class);
+    expect($latest)->toBeInstanceOf(ReferrerSource::class);
+
+    expect($oldest?->__toString())->toBe('utm_source=first');
+    expect($latest?->__toString())->toBe('utm_source=third');
+
+})->with([
+    [SessionDriver::class],
 ]);
