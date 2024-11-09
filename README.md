@@ -5,6 +5,8 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/elegantengineeringtech/laravel-referrer/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/elegantengineeringtech/laravel-referrer/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/elegantly/laravel-referrer.svg?style=flat-square)](https://packagist.org/packages/elegantly/laravel-referrer)
 
+![laravel-referrer](https://repository-images.githubusercontent.com/849508341/dce87156-6746-4177-8d49-f29e6be7de99)
+
 This package allows you to detect and store visitor referrers so that you can access them later.
 A typical use case would be saving the referrer in a database when a visitor registers in your app.
 
