@@ -2,6 +2,7 @@
 
 namespace Elegantly\Referrer\Sources;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Stringable;
@@ -44,5 +45,14 @@ abstract class ReferrerSource implements Arrayable, Stringable
         }
 
         return strval($this) === strval($source);
+    }
+
+    public function getDate(): ?Carbon
+    {
+        if (! $this->timestamp) {
+            return null;
+        }
+
+        return Carbon::createFromTimestamp($this->timestamp);
     }
 }
