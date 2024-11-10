@@ -23,8 +23,22 @@ class RequestHeaderSource extends ReferrerSource
 
     public static function fromRequest(Request $request): static
     {
+        $referer = $request->header('referer'); // spelling is a known mistake
+
+        if (blank($referer)) {
+            return new static;
+        }
+
+        if (! is_string($referer)) {
+            return new static;
+        }
+
+        if (parse_url($referer, PHP_URL_HOST) === parse_url(url('/'), PHP_URL_HOST)) {
+            return new static;
+        }
+
         return new static(
-            referer: $request->header('referer'), // spelling is a known mistake
+            referer: $referer,
             timestamp: (float) $request->server('REQUEST_TIME')
         );
     }
