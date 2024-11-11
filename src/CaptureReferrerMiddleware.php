@@ -16,36 +16,34 @@ class CaptureReferrerMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $sources = $this->getReferrerBySource($request);
+        $sources = Referrer::getSources();
 
-        if ($sources->count()) {
+        $updated = false;
+
+        foreach (Referrer::getSourcesFromConfig() as $sourceName) {
+            $strategy = Referrer::getStrategy($sourceName);
+            $source = $sourceName::fromRequest($request);
+
+            if ($source->isEmpty()) {
+                continue;
+            }
+
+            if ($sources->has($source)) {
+                continue;
+            }
+
+            $sources->put(
+                source: $source,
+                strategy: $strategy
+            );
+
+            $updated = true;
+        }
+
+        if ($updated) {
             Referrer::put($sources);
         }
 
         return $next($request);
-    }
-
-    public function getReferrerBySource(Request $request): ReferrerSources
-    {
-        $items = Referrer::getSources();
-
-        $sources = Referrer::getSourcesFromConfig();
-
-        foreach ($sources as $sourceName) {
-            $strategy = Referrer::getStrategy($sourceName);
-            $source = $sourceName::fromRequest($request);
-
-            if (
-                $source->isNotEmpty() &&
-                ! $items->has($source)
-            ) {
-                $items->put(
-                    source: $source,
-                    strategy: $strategy
-                );
-            }
-        }
-
-        return $items;
     }
 }
