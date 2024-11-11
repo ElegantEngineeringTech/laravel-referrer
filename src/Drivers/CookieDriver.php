@@ -4,7 +4,6 @@ namespace Elegantly\Referrer\Drivers;
 
 use Elegantly\Referrer\ReferrerSources;
 use Illuminate\Support\Facades\Cookie;
-use Symfony\Component\HttpFoundation\Cookie as SymfonyCookie;
 
 /**
  * @phpstan-import-type ReferrerSourcesArray from ReferrerSources
@@ -39,10 +38,10 @@ class CookieDriver extends ReferrerDriver
     public function put(ReferrerSources $sources): void
     {
         Cookie::queue(
-            new SymfonyCookie(
+            Cookie::make(
                 name: $this->name,
                 value: $sources->toJson(),
-                expire: now()->addSeconds($this->lifetime)
+                minutes: (int) ($this->lifetime / 60)
             )
         );
     }
@@ -65,6 +64,6 @@ class CookieDriver extends ReferrerDriver
 
     public function forget(): void
     {
-        Cookie::forget($this->name);
+        Cookie::expire($this->name);
     }
 }
