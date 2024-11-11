@@ -185,6 +185,18 @@ class ReferrerSources implements Arrayable, Countable, IteratorAggregate, Jsonab
     }
 
     /**
+     * @param  class-string<ReferrerSource<mixed>>  $source
+     * @param  ReferrerSource<mixed>[]  $sources
+     * @return $this
+     */
+    public function set(string $source, array $sources): static
+    {
+        $this->items[$source] = $sources;
+
+        return $this;
+    }
+
+    /**
      * @param  ReferrerSource<mixed>  $source
      */
     public function put(
@@ -207,12 +219,22 @@ class ReferrerSources implements Arrayable, Countable, IteratorAggregate, Jsonab
     }
 
     /**
-     * @param  class-string<ReferrerSource<mixed>>  $source
+     * @param  class-string<ReferrerSource<mixed>>|ReferrerSource<mixed>  $source
      * @return $this
      */
-    public function forget(string $source): static
+    public function forget(string|ReferrerSource $source): static
     {
-        unset($this->items[$source]);
+        if ($source instanceof ReferrerSource) {
+            $this->set(
+                $source::class,
+                array_filter(
+                    $this->get($source::class),
+                    fn ($value) => ! $source->is($value)
+                )
+            );
+        } else {
+            unset($this->items[$source]);
+        }
 
         return $this;
     }
@@ -278,7 +300,10 @@ class ReferrerSources implements Arrayable, Countable, IteratorAggregate, Jsonab
         foreach ($sources as $source => $values) {
 
             foreach ($values as $value) {
-                rescue(fn () => $items->add($source::fromArray($value)));
+                rescue(
+                    fn () => $items->add($source::fromArray($value)),
+                    report: false
+                );
             }
 
         }

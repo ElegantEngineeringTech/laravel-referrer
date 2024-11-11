@@ -141,3 +141,40 @@ it('forget a source from the items', function () {
 
     expect($sources->count())->toBe(1);
 });
+
+it('forget a specific source from the items', function () {
+    $sources = new ReferrerSources;
+
+    $item = new UtmReferrerSource(
+        utm_source: 'google'
+    );
+
+    $sources
+        ->put(
+            source: new RequestHeaderSource(
+                referer: 'foo'
+            ),
+            strategy: Strategy::All
+        )
+        ->put(
+            source: $item,
+            strategy: Strategy::All
+        )
+        ->put(
+            source: new UtmReferrerSource(
+                utm_source: 'fake'
+            ),
+            strategy: Strategy::All
+        );
+
+    expect($sources->count())->toBe(2);
+    expect($sources->get($item::class))->toHaveLength(2);
+    expect($sources->has($item))->toBe(true);
+
+    $sources->forget($item);
+
+    expect($sources->count())->toBe(2);
+    expect($sources->get($item::class))->toHaveLength(1);
+    expect($sources->has($item))->toBe(false);
+
+});
