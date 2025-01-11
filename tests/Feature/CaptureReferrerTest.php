@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Elegantly\Referrer\Drivers\ContextDriver;
 use Elegantly\Referrer\Drivers\SessionDriver;
 use Elegantly\Referrer\Enums\Strategy;

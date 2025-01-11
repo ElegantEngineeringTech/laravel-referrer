@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Elegantly\Referrer\Facades;
 
 use Elegantly\Referrer\Drivers\ReferrerDriver;
