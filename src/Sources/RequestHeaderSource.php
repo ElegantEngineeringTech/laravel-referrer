@@ -27,11 +27,11 @@ class RequestHeaderSource extends ReferrerSource
     {
         $referer = $request->header('referer'); // spelling is a known mistake
 
-        if (blank($referer)) {
+        if (! is_string($referer)) {
             return new static;
         }
 
-        if (! is_string($referer)) {
+        if (blank($referer)) {
             return new static;
         }
 

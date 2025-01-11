@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static array<class-string<ReferrerDriver>, mixed> getDriversFromConfig()
- * @method static array<int, class-string<ReferrerSource>> getSourcesFromConfig()
- * @method static Strategy getStrategy(null|class-string<ReferrerSource>|ReferrerSource $source = null)
+ * @method static array<int, class-string<ReferrerSource<mixed>>> getSourcesFromConfig()
+ * @method static Strategy getStrategy(null|class-string<ReferrerSource<mixed>>|ReferrerSource<mixed> $source = null)
  * @method static array<class-string<ReferrerDriver>, ReferrerSources> getSourcesByDriver()
  * @method static ReferrerSources getSources(null|class-string<ReferrerDriver>  $driver = null)
  * @method static void put(ReferrerSources $sources, null|class-string<ReferrerDriver>  $driver = null)
